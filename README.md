@@ -298,3 +298,9 @@ The API will return objects like this when requests fail because of errors of ty
 		"success":  true
 	}
 	```
+
+### Testing
+The test database is `casting_agency_test.db`. To run the tests, run
+```
+python test_flaskr.py
+```

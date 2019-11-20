@@ -94,7 +94,7 @@ def create_app(test_config=None):
         where actors is the list of actors paged by 10
         or appropriate status code indicating reason for failure
     '''
-    @app.route('/actors/<int:actor_id>', methods=['PATCH'])
+    @app.route('/actors/<actor_id>', methods=['PATCH'])
     @requires_auth('patch:actors+movies')
     def update_actor(_jwt, actor_id):
         body = request.get_json()
@@ -134,7 +134,7 @@ def create_app(test_config=None):
         where actors is the list of actors paged by 10
         or appropriate status code indicating reason for failure
     '''
-    @app.route('/actors/<int:actor_id>', methods=['DELETE'])
+    @app.route('/actors/<actor_id>', methods=['DELETE'])
     @requires_auth('post+delete:actors')
     def delete_actor(_jwt, actor_id):
         try:
@@ -219,7 +219,7 @@ def create_app(test_config=None):
         where movie is the updated movie
         or an appropriate error code
     '''
-    @app.route('/movies/<int:movie_id>', methods=['PATCH'])
+    @app.route('/movies/<movie_id>', methods=['PATCH'])
     @requires_auth('patch:actors+movies')
     def edit_movie(_jwt, movie_id):
         body = request.get_json()
@@ -255,7 +255,7 @@ def create_app(test_config=None):
         where movies is the remaining movies after deletion pages 10
         or an appropriate error code
     '''
-    @app.route('/movies/<int:movie_id>', methods=["DELETE"])
+    @app.route('/movies/<movie_id>', methods=["DELETE"])
     @requires_auth('post+delete:movies')
     def remove_movie(_jwt, movie_id):
         try:
