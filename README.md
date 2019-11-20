@@ -304,3 +304,4 @@ The test database is `casting_agency_test.db`. To run the tests, run
 ```
 python test_flaskr.py
 ```
+Replacing the auth tokens as needed.
