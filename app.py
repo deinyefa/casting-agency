@@ -188,7 +188,7 @@ def create_app(test_config=None):
     '''
     @app.route('/movies', methods=['POST'])
     @requires_auth('post+delete:movies')
-    def create_movies():
+    def create_movies(_jwt):
         body = request.get_json()
         movie_title = body.get('title', None)
         movie_release_date = body.get('release_date', None)
