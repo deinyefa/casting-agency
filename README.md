@@ -53,7 +53,7 @@ The `--reload` flag will reload the server when a file is changed.
 ### Getting Authenticated
 To log, please visit this [Auth0 login interface](https://dev-deinyefa.auth0.com/authorize?audience=casting-agency&response_type=token&client_id=gZlfS8C3GgADzGL5UezkiwTTkNrPl5bR&redirect_uri=https://casting-agency.herokuapp.com). You will be redirected back to the hosted service with your authorization token in the browser bar. This token will be used to access the endpoints.
 
-Three test users with different permission levels have been created in order to test the endpoints:
+Three test users with different permission levels have been created in order to test the endpoints (tokens will expire every 2 hours):
 
  - Casting Assistant
 	 - Email: casting.assistant@example.com
