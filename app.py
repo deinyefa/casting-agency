@@ -21,8 +21,8 @@ def create_app(test_config=None):
 
     app = Flask(
         __name__,
-        static_folder='client/build/static',
-        template_folder='client/build'
+        static_folder='./client/build/static',
+        template_folder='./client/build'
     )
     setup_db(app)
     CORS(app)
