@@ -5,7 +5,7 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 import { Auth0Provider } from './react-auth0-spa';
-import { config } from './utils/auth_config'
+import { REACT_APP_AUDIENCE, REACT_APP_DOMAIN, REACT_APP_CLIENTID, REACT_APP_CALLBACKURL } from './utils/auth_config';
 import history from './utils/history'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
@@ -15,11 +15,11 @@ const onRedirectCallback = appState => {
 
 ReactDOM.render(
     <Auth0Provider
-        domain={config.domain}
-        client_id={config.clientId}
-        redirect_uri={config.callbackURL}
+        domain={REACT_APP_DOMAIN}
+        client_id={REACT_APP_CLIENTID}
+        redirect_uri={REACT_APP_CALLBACKURL}
         onRedirectCallback={onRedirectCallback}
-        audience={config.audience}
+        audience={REACT_APP_AUDIENCE}
     >
         <App />
     </Auth0Provider>, document.getElementById('root'));
