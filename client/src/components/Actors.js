@@ -10,7 +10,7 @@ export const Actors = () => {
     const { getTokenSilently } = useAuth0()
     getTokenSilently().then(res => setToken(res))
     
-    const url = `http://localhost:5000/actors?page=${pageNum}`
+    const url = `/actors?page=${pageNum}`
     const result = useFetch(url, {}, token)
 
     const selectPage = num => setPageNum(num)

@@ -5,7 +5,7 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 import { Auth0Provider } from './react-auth0-spa';
-import config from './utils/auth_config.json'
+import { config } from './utils/auth_config'
 import history from './utils/history'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
