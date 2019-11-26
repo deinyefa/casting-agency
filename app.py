@@ -1,5 +1,5 @@
 import os
-from flask import Flask, abort, jsonify, request
+from flask import Flask, abort, jsonify, request, render_template
 from models import setup_db, Actor, Movie, format_date
 from auth import requires_auth, AuthError
 from flask_cors import CORS
@@ -280,13 +280,9 @@ def create_app(test_config=None):
             print(e)
             abort(422)
 
-    # @app.route('/')
-    # def get_greeting():
-    #     excited = 'true'
-    #     greeting = "Hello"
-    #     if excited == 'true':
-    #         greeting = greeting + "!!!!!"
-    #     return greeting
+    @app.route('/')
+    def get_greeting():
+        return render_template("index.html")
 
     @app.route('/coolkids')
     def be_cool():
