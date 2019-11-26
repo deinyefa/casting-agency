@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { Container, Row } from 'reactstrap';
 import { useFetch } from '../hooks/useFetch';
-import { Actor } from './Actor'
+import { Actor } from './Actor';
+import { useAuth0 } from '../react-auth0-spa';
 
 export const Actors = () => {
     const [pageNum, setPageNum] = useState(1)
+    const [token, setToken] = useState()
+    const { getTokenSilently } = useAuth0()
+    getTokenSilently().then(res => setToken(res))
     
     const url = `http://localhost:5000/actors?page=${pageNum}`
-    const result = useFetch(url, {})
+    const result = useFetch(url, {}, token)
 
     const selectPage = num => setPageNum(num)
     const create_pagination = () => {
@@ -24,13 +28,11 @@ export const Actors = () => {
         return pageNumbers
     }
 
-    console.log(result)
-
     return (
         <Container>
             <h1>Actors!</h1>
             <Row>
-                {result.actors ? result.actors.map(actor => <Actor key={actor.id} actor={actor} />) : null}
+                {result.actors ? result.actors.map(actor => <Actor key={actor.id} actor={actor} />) : <p>Loading...</p>}
             </Row>
             <Row>
                 {create_pagination()}

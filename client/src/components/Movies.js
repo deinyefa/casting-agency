@@ -28,8 +28,6 @@ export const Movies = () => {
         return pageNumbers
     }
 
-    // console.log(result)
-
     return (
         <Container>
             <h1>Movies!</h1>
