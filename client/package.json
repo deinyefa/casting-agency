@@ -2,7 +2,6 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
-  "homepage" : "https://casting-agency.herokuapp.com/client",
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.5.0",
     "bootstrap": "^4.3.1",
