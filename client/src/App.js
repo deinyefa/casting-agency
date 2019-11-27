@@ -10,15 +10,15 @@ import { Actors } from './components/Actors';
 import './App.css';
 
 function App() {
-  const { loading } = useAuth0;
+  const { loading, user } = useAuth0;
 
-  if (loading) {
-    return 'Loading...'
+  if (loading && !user) {
+    return <p>Loading...</p>
   }
   return (
     <Router history={history}>
       <div id="app" className="d-flex flex-column w-100">
-        <NavBar/>
+        <NavBar />
         <Container className="flex-grow-1 mt-5">
           <Switch>
             <Route path='/' exact component={Home} />

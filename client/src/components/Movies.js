@@ -1,14 +1,21 @@
 import React, { useState } from 'react';
-import { Container, Row } from 'reactstrap';
+import { Container, Row, Button } from 'reactstrap';
+import jwt from 'jwt-decode';
 import { useFetch } from '../hooks/useFetch';
-import { Movie } from './Movie';
 import { useAuth0 } from '../react-auth0-spa';
+import { Movie } from './Movie';
+import { AddMovie } from './Forms/AddMovie';
 
 export const Movies = () => {
+    const [openModal, setOpenModal] = useState(false)
     const [pageNum, setPageNum] = useState(1)
     const [token, setToken] = useState()
-    const { getTokenSilently } = useAuth0()
-    getTokenSilently().then(res => setToken(res))
+    const { getTokenSilently, user, loading } = useAuth0()
+    
+    if (user && !loading) getTokenSilently().then(res => setToken(res))
+
+    let decodedToken;
+    if (token) decodedToken = jwt(token)
     
     const url = `/movies?page=${pageNum}`
     const result = useFetch(url, {}, token) || {}
@@ -31,8 +38,14 @@ export const Movies = () => {
     return (
         <Container>
             <h1>Movies!</h1>
+            {
+                (decodedToken && decodedToken.permissions.indexOf("post+delete:movies") !== -1) ?
+                    <Button color="primary" onClick={() => setOpenModal(!openModal)}>Add a movie</Button> :
+                    null
+            }
+            <AddMovie isOpen={openModal} toggleModal={() => setOpenModal(!openModal)} />
             <Row>
-                {result.movies ? result.movies.map(movie => <Movie key={movie.id} movie={movie} />) : <p>Loading...</p>}
+                {result.movies ? result.movies.map(movie => <Movie key={movie.id} movie={movie} exposedToken={decodedToken} />) : <p>Loading...</p>}
             </Row>
             <Row>
                 {create_pagination()}

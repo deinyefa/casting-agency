@@ -11,8 +11,7 @@ export const useFetch = (url, defaultData, token, method='GET') => {
                     Authorization: 'Bearer ' + token
                 }
             })
-            const json = await response.json()
-            updateData(json)
+            updateData(await response.json())
         }
         fetchData()
     }, [url, token])
