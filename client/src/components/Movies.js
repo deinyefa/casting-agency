@@ -6,18 +6,19 @@ import { useAuth0 } from '../react-auth0-spa';
 import { Movie } from './Movie';
 import { AddMovie } from './Forms/AddMovie';
 import { REACT_APP_SERVER_URL } from '../utils/auth_config'
+import { Loader } from './UI/Loader';
 
 export const Movies = () => {
     const [openModal, setOpenModal] = useState(false)
     const [pageNum, setPageNum] = useState(1)
     const [token, setToken] = useState()
     const { getTokenSilently, user, loading } = useAuth0()
-    
+
     if (user && !loading) getTokenSilently().then(res => setToken(res))
 
     let decodedToken;
     if (token) decodedToken = jwt(token)
-    
+
     const url = `${REACT_APP_SERVER_URL}/movies?page=${pageNum}`
     const result = useFetch(url, {}, token) || {}
 
@@ -44,9 +45,13 @@ export const Movies = () => {
                     <Button color="primary" onClick={() => setOpenModal(!openModal)}>Add a movie</Button> :
                     null
             }
-            { openModal ? <AddMovie isOpen={openModal} toggleModal={() => setOpenModal(!openModal)} token={token} /> : null }
+            {openModal ? <AddMovie isOpen={openModal} toggleModal={() => setOpenModal(!openModal)} token={token} /> : null}
             <Row>
-                {result.movies ? result.movies.map(movie => <Movie key={movie.id} movie={movie} exposedToken={decodedToken} token={token} />) : <p>Loading...</p>}
+                {
+                    result.movies ?
+                        result.movies.map(movie => <Movie key={movie.id} movie={movie} exposedToken={decodedToken} token={token} />) :
+                        <Loader />
+                }
             </Row>
             <Row className="justify-content-center">
                 {create_pagination()}

@@ -6,6 +6,7 @@ import { Actor } from './Actor';
 import { useAuth0 } from '../react-auth0-spa';
 import { AddActor } from './Forms/AddActor';
 import { REACT_APP_SERVER_URL } from '../utils/auth_config'
+import { Loader } from './UI/Loader';
 
 export const Actors = () => {
     const [openModal, setOpenModal] = useState(false)
@@ -44,9 +45,13 @@ export const Actors = () => {
                     <Button color="primary" onClick={() => setOpenModal(!openModal)}>Add an actor</Button> :
                     null
             }
-            { openModal ? <AddActor isOpen={openModal} toggleModal={() => setOpenModal(!openModal)} token={token} /> : null }
+            {openModal ? <AddActor isOpen={openModal} toggleModal={() => setOpenModal(!openModal)} token={token} /> : null}
             <Row>
-                {result.actors ? result.actors.map(actor => <Actor key={actor.id} actor={actor} exposedToken={decodedToken} token={token} />) : <p>Loading...</p>}
+                {
+                    result.actors ?
+                        result.actors.map(actor => <Actor key={actor.id} actor={actor} exposedToken={decodedToken} token={token} />) :
+                        <Loader />
+                }
             </Row>
             <Row className="justify-content-center">
                 {create_pagination()}
