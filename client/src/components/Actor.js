@@ -1,9 +1,20 @@
 import React, { useState } from 'react'
 import { Col, Card, CardBody, CardTitle, CardText, Button } from 'reactstrap';
 import { AddActor } from './Forms/AddActor';
+import { REACT_APP_SERVER_URL } from '../utils/auth_config'
 
 export const Actor = ({ actor, exposedToken, token }) => {
     const [modalOpen, toggleModal] = useState(false)
+
+    const removeItem = async id => {
+        await fetch(`${REACT_APP_SERVER_URL}/actors/${id}`, {
+            method: 'DELETE',
+            headers: {
+                Authorization: 'Bearer ' + token,
+                'Content-Type': 'application/json'
+            },
+        })
+    }
 
     return (
         <>
@@ -21,7 +32,7 @@ export const Actor = ({ actor, exposedToken, token }) => {
                             </Button>
                             ) : null}
                             {exposedToken.permissions.indexOf("post+delete:actors") !== -1 ? (
-                                <Button color="danger" className="float-right">
+                                <Button color="danger" className="float-right" onClick={() => removeItem(actor.id)}>
                                     Delete
                             </Button>
                             ) : null}
