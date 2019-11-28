@@ -1,11 +1,14 @@
 import React, { useState } from 'react'
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, Label, Input } from 'reactstrap'
+import { REACT_APP_SERVER_URL } from '../../utils/auth_config'
 
-export const AddMovie = ({ isOpen, toggleModal }) => {
+export const AddMovie = ({ isOpen, toggleModal, movieData, token, editing }) => {
     const [formValues, setFormValues] = useState({
-        title: '',
-        release_date: ''
+        title: (movieData && movieData.title) || '',
+        release_date: (movieData && movieData.release_date) || ''
     })
+    const [result, setResult] = useState()
+    const url = `${REACT_APP_SERVER_URL}/movies`;
 
     const updateFormFields = (field, value) => {
         setFormValues({
@@ -14,10 +17,20 @@ export const AddMovie = ({ isOpen, toggleModal }) => {
         })
     }
 
-    const handleFormSubmit = (e) => {
-        e.preventDefault()
-        console.log('adding...')
-        toggleModal();
+    const handleFormSubmit = async () => {
+        const data = {
+            title: formValues.title,
+            release_date: formValues.release_date,
+        }
+        setResult(await fetch(editing ? `${url}/${movieData.id}` : url, {
+            method: editing ? 'PATCH' : 'POST',
+            headers: {
+                Authorization: 'Bearer ' + token,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }))
+        toggleModal()
     }
 
     return (

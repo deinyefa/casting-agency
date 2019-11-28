@@ -5,6 +5,7 @@ import { useFetch } from '../hooks/useFetch';
 import { Actor } from './Actor';
 import { useAuth0 } from '../react-auth0-spa';
 import { AddActor } from './Forms/AddActor';
+import { REACT_APP_SERVER_URL } from '../utils/auth_config'
 
 export const Actors = () => {
     const [openModal, setOpenModal] = useState(false)
@@ -17,7 +18,7 @@ export const Actors = () => {
     let decodedToken;
     if (token) decodedToken = jwt(token)
 
-    const url = `/actors?page=${pageNum}`
+    const url = `${REACT_APP_SERVER_URL}/actors?page=${pageNum}`
     const result = useFetch(url, {}, token)
 
     const selectPage = num => setPageNum(num)
@@ -43,11 +44,11 @@ export const Actors = () => {
                     <Button color="primary" onClick={() => setOpenModal(!openModal)}>Add an actor</Button> :
                     null
             }
-            <AddActor isOpen={openModal} toggleModal={() => setOpenModal(!openModal)} />
+            { openModal ? <AddActor isOpen={openModal} toggleModal={() => setOpenModal(!openModal)} token={token} /> : null }
             <Row>
-                {result.actors ? result.actors.map(actor => <Actor key={actor.id} actor={actor} exposedToken={decodedToken} />) : <p>Loading...</p>}
+                {result.actors ? result.actors.map(actor => <Actor key={actor.id} actor={actor} exposedToken={decodedToken} token={token} />) : <p>Loading...</p>}
             </Row>
-            <Row>
+            <Row className="justify-content-center">
                 {create_pagination()}
             </Row>
         </Container>

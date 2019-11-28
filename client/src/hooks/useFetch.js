@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export const useFetch = (url, defaultData, token, method='GET') => {
+export const useFetch = (url, defaultData, token, method='GET', body) => {
     const [data, updateData] = useState(defaultData);
 
     useEffect(() => {
@@ -8,8 +8,10 @@ export const useFetch = (url, defaultData, token, method='GET') => {
             const response = await fetch(url, {
                 method: method,
                 headers: {
-                    Authorization: 'Bearer ' + token
-                }
+                    Authorization: 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
             })
             updateData(await response.json())
         }
