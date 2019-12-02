@@ -25,7 +25,7 @@ export const AddMovie = ({ isOpen, toggleModal, movieData, token, editing }) => 
         setResult(await fetch(editing ? `${url}/${movieData.id}` : url, {
             method: editing ? 'PATCH' : 'POST',
             headers: {
-                Authorization: 'Bearer ' + token,
+                'Authorization': 'Bearer ' + token,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data)

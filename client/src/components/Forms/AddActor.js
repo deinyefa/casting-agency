@@ -26,7 +26,7 @@ export const AddActor = ({ isOpen, toggleModal, actorData, editing, token }) => 
         await fetch(editing ? `${url}/${actorData.id}` : url, {
             method: editing ? 'PATCH' : 'POST',
             headers: {
-                Authorization: 'Bearer ' + token,
+                'Authorization': 'Bearer ' + token,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data)
