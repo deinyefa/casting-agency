@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, Label, Input } from 'reactstrap'
 import { REACT_APP_SERVER_URL } from '../../utils/auth_config'
 
-export const AddMovie = ({ isOpen, toggleModal, movieData, token, editing }) => {
+export const AddMovie = ({ isOpen, toggleModal, movieData, handleFormSubmit }) => {
     const [formValues, setFormValues] = useState({
         title: (movieData && movieData.title) || '',
         release_date: (movieData && movieData.release_date) || ''
@@ -16,26 +16,26 @@ export const AddMovie = ({ isOpen, toggleModal, movieData, token, editing }) => 
         })
     }
 
-    const handleFormSubmit = async () => {
-        const data = {
-            title: formValues.title,
-            release_date: formValues.release_date,
-        }
-        const result = await fetch(editing ? `${url}/${movieData.id}` : url, {
-            method: editing ? 'PATCH' : 'POST',
-            headers: {
-                'Authorization': 'Bearer ' + token,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-        const response = await result.json()
-        setFormValues({
-            title: response.movie.title,
-            release_date: response.movie.release_date
-        })
-        toggleModal()
-    }
+    // const handleFormSubmit = async () => {
+    //     const data = {
+    //         title: formValues.title,
+    //         release_date: formValues.release_date,
+    //     }
+    //     const result = await fetch(editing ? `${url}/${movieData.id}` : url, {
+    //         method: editing ? 'PATCH' : 'POST',
+    //         headers: {
+    //             'Authorization': 'Bearer ' + token,
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify(data)
+    //     })
+    //     const response = await result.json()
+    //     setFormValues({
+    //         title: response.movie.title,
+    //         release_date: response.movie.release_date
+    //     })
+    //     toggleModal()
+    // }
 
     return (
         <Modal isOpen={isOpen} toggle={toggleModal}>

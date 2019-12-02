@@ -49,7 +49,7 @@ export const Movies = () => {
             <Row>
                 {
                     result.movies ?
-                        result.movies.map(movie => <Movie key={movie.id} movie={movie} exposedToken={decodedToken} token={token} />) :
+                        result.movies.map(movie => <Movie key={movie.id} movieData={movie} exposedToken={decodedToken} token={token} />) :
                         <Loader />
                 }
             </Row>
