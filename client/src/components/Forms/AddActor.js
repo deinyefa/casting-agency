@@ -23,13 +23,19 @@ export const AddActor = ({ isOpen, toggleModal, actorData, editing, token }) => 
             age: formValues.age,
             gender: formValues.gender
         }
-        await fetch(editing ? `${url}/${actorData.id}` : url, {
+        const result = await fetch(editing ? `${url}/${actorData.id}` : url, {
             method: editing ? 'PATCH' : 'POST',
             headers: {
                 'Authorization': 'Bearer ' + token,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data)
+        })
+        const response = await result.json()
+        setFormValues({
+            name: response.actor.name,
+            age: response.actor.age,
+            gender: response.actor.gender
         })
         toggleModal()
     }

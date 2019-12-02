@@ -7,7 +7,6 @@ export const AddMovie = ({ isOpen, toggleModal, movieData, token, editing }) => 
         title: (movieData && movieData.title) || '',
         release_date: (movieData && movieData.release_date) || ''
     })
-    const [result, setResult] = useState()
     const url = `${REACT_APP_SERVER_URL}/movies`;
 
     const updateFormFields = (field, value) => {
@@ -22,14 +21,19 @@ export const AddMovie = ({ isOpen, toggleModal, movieData, token, editing }) => 
             title: formValues.title,
             release_date: formValues.release_date,
         }
-        setResult(await fetch(editing ? `${url}/${movieData.id}` : url, {
+        const result = await fetch(editing ? `${url}/${movieData.id}` : url, {
             method: editing ? 'PATCH' : 'POST',
             headers: {
                 'Authorization': 'Bearer ' + token,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data)
-        }))
+        })
+        const response = await result.json()
+        setFormValues({
+            title: response.movie.title,
+            release_date: response.movie.release_date
+        })
         toggleModal()
     }
 
