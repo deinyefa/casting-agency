@@ -3,8 +3,15 @@ import { Col, Card, CardBody, CardTitle, CardText, Button } from 'reactstrap';
 import { AddActor } from './Forms/AddActor';
 import { REACT_APP_SERVER_URL } from '../utils/auth_config'
 
-export const Actor = ({ actor, exposedToken, token }) => {
+export const Actor = ({ actorData, exposedToken, token }) => {
+    const [editing, setEditing] = useState(false)
     const [modalOpen, toggleModal] = useState(false)
+    const [actor, setActor] = useState({
+        name: (actor && actorData.name) || '',
+        age: (actorData && actorData.age) || '',
+        gender: (actorData && actorData.gender) || ''
+    })
+    const url = `${REACT_APP_SERVER_URL}/movies`;
 
     const removeItem = async id => {
         await fetch(`${REACT_APP_SERVER_URL}/actors/${id}`, {
@@ -14,6 +21,25 @@ export const Actor = ({ actor, exposedToken, token }) => {
                 'Content-Type': 'application/json'
             },
         })
+    }
+
+    const handleFormSubmit = async data => {
+        const result = await fetch(editing ? `${url}/${actorData.id}` : url, {
+            method: editing ? 'PATCH' : 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        const response = await result.json()
+        
+        setActor({
+            name: response.actor.name,
+            age: response.actor.age,
+            gender: response.actor.gender
+        })
+        toggleModal()
     }
 
     return (
@@ -26,6 +52,7 @@ export const Actor = ({ actor, exposedToken, token }) => {
                         <div className="clearfix p-2">
                             {exposedToken.permissions.indexOf("patch:actors+movies") !== -1 ? (
                                 <Button color="primary" className="float-left" onClick={() => {
+                                    setEditing(true)
                                     toggleModal(!modalOpen)
                                 }}>
                                     Edit
@@ -41,7 +68,7 @@ export const Actor = ({ actor, exposedToken, token }) => {
                 </Card>
             </Col>
             {
-                modalOpen ? <AddActor isOpen={modalOpen} toggleModal={() => toggleModal(!modalOpen)} actorData={actor} editing token={token} /> : null
+                modalOpen ? <AddActor isOpen={modalOpen} toggleModal={() => toggleModal(!modalOpen)} actorData={actor} handleFormSubmit={handleFormSubmit} /> : null
             }
         </>
     )

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, Label, Input } from 'reactstrap'
 import { REACT_APP_SERVER_URL } from '../../utils/auth_config'
 
-export const AddActor = ({ isOpen, toggleModal, actorData, editing, token }) => {
+export const AddActor = ({ isOpen, toggleModal, actorData, handleFormSubmit }) => {
     const [formValues, setFormValues] = useState({
         name: (actorData && actorData.name) || '',
         age: (actorData && actorData.age) || '',
@@ -17,35 +17,19 @@ export const AddActor = ({ isOpen, toggleModal, actorData, editing, token }) => 
         })
     }
 
-    const handleFormSubmit = async () => {
-        const data = {
-            name: formValues.name,
-            age: formValues.age,
-            gender: formValues.gender
-        }
-        const result = await fetch(editing ? `${url}/${actorData.id}` : url, {
-            method: editing ? 'PATCH' : 'POST',
-            headers: {
-                'Authorization': 'Bearer ' + token,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-        const response = await result.json()
-        setFormValues({
-            name: response.actor.name,
-            age: response.actor.age,
-            gender: response.actor.gender
-        })
-        toggleModal()
-    }
-
     return (
         <>
             <Modal isOpen={isOpen} toggle={toggleModal}>
                 <ModalHeader toggle={toggleModal}>Add an actor</ModalHeader>
                 <ModalBody>
-                    <Form onSubmit={handleFormSubmit}>
+                    <Form onSubmit={e => {
+                        e.preventDefault()
+                        handleFormSubmit({
+                            name: formValues.name,
+                            age: formValues.age,
+                            gender: formValues.gender
+                        })
+                    }}>
                         <FormGroup>
                             <Label>Actor name</Label>
                             <Input
@@ -77,7 +61,14 @@ export const AddActor = ({ isOpen, toggleModal, actorData, editing, token }) => 
                 </ModalBody>
                 <ModalFooter>
                     <Button color="warning" onClick={toggleModal}>Cancel</Button>
-                    <Button color="primary" type='submit' onClick={handleFormSubmit}>Add</Button>
+                    <Button color="primary" type='submit' onClick={e => {
+                        e.preventDefault()
+                        handleFormSubmit({
+                            name: formValues.name,
+                            age: formValues.age,
+                            gender: formValues.gender
+                        })
+                    }}>Add</Button>
                 </ModalFooter>
             </Modal>
         </>

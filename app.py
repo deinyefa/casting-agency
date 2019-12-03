@@ -83,6 +83,7 @@ def create_app(test_config=None):
             return jsonify({
                 'actors': current_actors,
                 'created': actor.id,
+                'actor': actor.format(),
                 'total_actors': len(Actor.query.all()),
                 'success': True,
             })
@@ -207,6 +208,7 @@ def create_app(test_config=None):
 
             return jsonify({
                 "movies": paginate_response(request, movies),
+                "movie": movie.format(),
                 "total_movies": len(movies),
                 "success": True
             })
