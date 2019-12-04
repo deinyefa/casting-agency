@@ -1,38 +1,21 @@
-import React, { useState } from "react";
+import React from "react";
 import { Col, Card, CardBody, CardTitle, CardText, Button } from "reactstrap";
-import { REACT_APP_SERVER_URL } from "../utils/auth_config";
 import { NavLink as RouterNavLink, withRouter } from "react-router-dom";
 
 const ActorItem = ({
     actorData,
     exposedToken,
-    token
-}) => {
-    const [actor, setActor] = useState({
-        name: (actorData && actorData.name) || "",
-        age: (actorData && actorData.age) || "",
-        gender: (actorData && actorData.gender) || ""
-    });
-
-    const removeItem = async id => {
-        await fetch(`${REACT_APP_SERVER_URL}/actors/${id}`, {
-            method: "DELETE",
-            headers: {
-                Authorization: "Bearer " + token,
-                "Content-Type": "application/json"
-            }
-        });
-    };
-
-    return (
+    token,
+    removeItem
+}) => (
         <>
             <Col md="4" className="my-3">
                 <Card>
                     <CardBody>
                         <CardTitle>
-                            {actor.name}, {actor.age}
+                            {actorData.name}, {actorData.age}
                         </CardTitle>
-                        <CardText>{actor.gender}</CardText>
+                        <CardText>{actorData.gender}</CardText>
                         <div className="clearfix p-2">
                             {exposedToken.permissions.indexOf("patch:actors+movies") !==
                                 -1 ? (
@@ -46,16 +29,16 @@ const ActorItem = ({
                                         }}
                                     >
                                         Edit
-                                    </Button>
-                            ) : null}
+                                </Button>
+                                ) : null}
                             {exposedToken.permissions.indexOf("post+delete:actors") !== -1 ? (
                                 <Button
                                     color="danger"
                                     className="float-right"
-                                    onClick={() => removeItem(actor.id)}
+                                    onClick={() => removeItem(actorData.id)}
                                 >
                                     Delete
-                                </Button>
+                            </Button>
                             ) : null}
                         </div>
                     </CardBody>
@@ -63,6 +46,5 @@ const ActorItem = ({
             </Col>
         </>
     );
-};
 
 export const Actor = withRouter(ActorItem)

@@ -1,35 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 import { Col, Card, CardBody, CardTitle, CardText, Button } from "reactstrap";
-import { REACT_APP_SERVER_URL } from "../utils/auth_config";
 import { NavLink as RouterNavLink, withRouter } from "react-router-dom";
 
 const MovieItem = ({
     movieData,
     exposedToken,
-    token
-}) => {
-    const [movie, setMovie] = useState({
-        title: (movieData && movieData.title) || "",
-        release_date: (movieData && movieData.release_date) || ""
-    });
-
-    const removeItem = async id => {
-        await fetch(`${REACT_APP_SERVER_URL}/movies/${id}`, {
-            method: "DELETE",
-            headers: {
-                Authorization: "Bearer " + token,
-                "Content-Type": "application/json"
-            }
-        });
-    };
-
-    return (
+    token,
+    removeItem
+}) => (
         <>
             <Col md="4" className="my-3">
                 <Card>
                     <CardBody>
-                        <CardTitle>{movie.title}</CardTitle>
-                        <CardText>Release Date: {movie.release_date}</CardText>
+                        <CardTitle>{movieData.title}</CardTitle>
+                        <CardText>Release Date: {movieData.release_date}</CardText>
                         <div className="clearfix p-2">
                             {exposedToken.permissions.indexOf("patch:actors+movies") !==
                                 -1 ? (
@@ -43,7 +27,7 @@ const MovieItem = ({
                                         }}
                                     >
                                         Edit
-                                    </Button>
+                                </Button>
                                 ) : null}
                             {exposedToken.permissions.indexOf("post+delete:movies") !== -1 ? (
                                 <Button
@@ -54,7 +38,7 @@ const MovieItem = ({
                                     onClick={() => removeItem(movieData.id)}
                                 >
                                     Delete
-                                </Button>
+                            </Button>
                             ) : null}
                         </div>
                     </CardBody>
@@ -62,6 +46,5 @@ const MovieItem = ({
             </Col>
         </>
     );
-};
 
 export const Movie = withRouter(MovieItem)

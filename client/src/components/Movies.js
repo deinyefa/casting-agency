@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Row, Button } from "reactstrap";
 import { NavLink as RouterNavLink, Route, Switch } from "react-router-dom";
 import jwt from "jwt-decode";
@@ -10,18 +10,22 @@ import { Loader } from "./UI/Loader";
 import { AddMovie } from './Forms/AddMovie';
 
 const Movies = () => {
-    const [editing, setEditing] = useState(false);
+    const [response, setResponse] = useState({});
     const [pageNum, setPageNum] = useState(1);
     const [token, setToken] = useState();
     const { getTokenSilently, user, loading } = useAuth0();
+
+    const url = `${REACT_APP_SERVER_URL}/movies?page=${pageNum}`;
+    const result = useFetch(url, {}, token) || {};
+
+    useEffect(() => {
+        setResponse(result)
+    }, [result])
 
     if (user && !loading) getTokenSilently().then(res => setToken(res));
 
     let decodedToken;
     if (token) decodedToken = jwt(token);
-
-    const url = `${REACT_APP_SERVER_URL}/movies?page=${pageNum}`;
-    const result = useFetch(url, {}, token) || {};
 
     const selectPage = num => setPageNum(num);
     const create_pagination = () => {
@@ -45,6 +49,18 @@ const Movies = () => {
         return pageNumbers;
     };
 
+    const removeItem = async id => {
+        const result = await fetch(`${REACT_APP_SERVER_URL}/movies/${id}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: "Bearer " + token,
+                "Content-Type": "application/json"
+            }
+        });
+        const getResult = await result.json()
+        setResponse(getResult)
+    };
+
     return (
         <>
             <Container>
@@ -59,15 +75,14 @@ const Movies = () => {
                         </Button>
                     ) : null}
                 <Row>
-                    {result.movies ? (
-                        result.movies.map(movie => (
+                    {response.movies ? (
+                        response.movies.map(movie => (
                             <Movie
                                 key={movie.id}
                                 movieData={movie}
                                 exposedToken={decodedToken}
                                 token={token}
-                                editing={editing}
-                                setEditing={setEditing}
+                                removeItem={removeItem}
                             />
                         ))
                     ) : (

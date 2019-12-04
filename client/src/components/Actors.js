@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Row, Button } from "reactstrap";
 import jwt from "jwt-decode";
 import { useFetch } from "../hooks/useFetch";
@@ -10,18 +10,22 @@ import { Loader } from "./UI/Loader";
 import { AddActor } from "./Forms/AddActor";
 
 const Actors = () => {
-    const [editing, setEditing] = useState(false);
+    const [response, setResponse] = useState({});
     const [pageNum, setPageNum] = useState(1);
     const [token, setToken] = useState();
     const { getTokenSilently, user, loading } = useAuth0();
+    
+    const url = `${REACT_APP_SERVER_URL}/actors?page=${pageNum}`;
+    const result = useFetch(url, {}, token);
+
+    useEffect(() => {
+        setResponse(result)
+    }, [result])
 
     if (user && !loading) getTokenSilently().then(res => setToken(res));
 
     let decodedToken;
     if (token) decodedToken = jwt(token);
-
-    const url = `${REACT_APP_SERVER_URL}/actors?page=${pageNum}`;
-    const result = useFetch(url, {}, token);
 
     const selectPage = num => setPageNum(num);
     const create_pagination = () => {
@@ -45,6 +49,18 @@ const Actors = () => {
         return pageNumbers;
     };
 
+    const removeItem = async id => {
+        const result = await fetch(`${REACT_APP_SERVER_URL}/actors/${id}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: "Bearer " + token,
+                "Content-Type": "application/json"
+            }
+        })
+        const getResult = await result.json()
+        setResponse(getResult)
+    };
+
     return (
         <Container>
             <h1>Actors</h1>
@@ -62,14 +78,14 @@ const Actors = () => {
                     </Button>
             ) : null}
             <Row>
-                {result.actors ? (
-                    result.actors.map(actor => (
+                {response.actors ? (
+                    response.actors.map(actor => (
                         <Actor
                             key={actor.id}
                             actorData={actor}
                             exposedToken={decodedToken}
                             token={token}
-                            editing={editing}
+                            removeItem={removeItem}
                         />
                     ))
                     ) : (
