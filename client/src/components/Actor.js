@@ -1,24 +1,18 @@
 import React, { useState } from "react";
 import { Col, Card, CardBody, CardTitle, CardText, Button } from "reactstrap";
-import { AddActor } from "./Forms/AddActor";
 import { REACT_APP_SERVER_URL } from "../utils/auth_config";
+import { NavLink as RouterNavLink, withRouter } from "react-router-dom";
 
-export const Actor = ({
+const ActorItem = ({
     actorData,
     exposedToken,
-    token,
-    editing,
-    setEditing,
-    openModal,
-    setOpenModal
+    token
 }) => {
-    const [openEditModal, setEditModal] = useState(false)
     const [actor, setActor] = useState({
         name: (actorData && actorData.name) || "",
         age: (actorData && actorData.age) || "",
         gender: (actorData && actorData.gender) || ""
     });
-    const url = `${REACT_APP_SERVER_URL}/movies`;
 
     const removeItem = async id => {
         await fetch(`${REACT_APP_SERVER_URL}/actors/${id}`, {
@@ -28,27 +22,6 @@ export const Actor = ({
                 "Content-Type": "application/json"
             }
         });
-    };
-
-    const handleFormSubmit = async (id, data) => {
-        console.log(id)
-        console.log(data)
-        const result = await fetch(editing ? `${url}/${id}` : url, {
-            method: editing ? "PATCH" : "POST",
-            headers: {
-                Authorization: "Bearer " + token,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        });
-        const response = await result.json();
-
-        setActor({
-            name: response.actor.name,
-            age: response.actor.age,
-            gender: response.actor.gender
-        });
-        setOpenModal();
     };
 
     return (
@@ -66,10 +39,10 @@ export const Actor = ({
                                     <Button
                                         color="primary"
                                         className="float-left"
-                                        onClick={() => {
-                                            setEditing(true);
-                                            setOpenModal(true);
-                                            console.log('clicked')
+                                        tag={RouterNavLink}
+                                        to={{
+                                            pathname: '/actors/add-actor',
+                                            state: { actorData, editing: true, token }
                                         }}
                                     >
                                         Edit
@@ -88,15 +61,8 @@ export const Actor = ({
                     </CardBody>
                 </Card>
             </Col>
-            {openModal ? (
-                <AddActor
-                    isOpen={openModal}
-                    toggleModal={() => setOpenModal(!openModal)}
-                    actorData={actor}
-                    handleFormSubmit={handleFormSubmit}
-                    editing={editing}
-                />
-            ) : null}
         </>
     );
 };
+
+export const Actor = withRouter(ActorItem)

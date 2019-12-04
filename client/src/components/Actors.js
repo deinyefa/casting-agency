@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { Container, Row, Button } from "reactstrap";
 import jwt from "jwt-decode";
 import { useFetch } from "../hooks/useFetch";
+import  { Switch, Route, NavLink as RouterNavLink } from "react-router-dom";
 import { Actor } from "./Actor";
 import { useAuth0 } from "../react-auth0-spa";
 import { REACT_APP_SERVER_URL } from "../utils/auth_config";
 import { Loader } from "./UI/Loader";
+import { AddActor } from "./Forms/AddActor";
 
-export const Actors = () => {
-    const [openModal, setOpenModal] = useState(false);
+const Actors = () => {
     const [editing, setEditing] = useState(false);
     const [pageNum, setPageNum] = useState(1);
     const [token, setToken] = useState();
@@ -51,10 +52,11 @@ export const Actors = () => {
                 decodedToken.permissions.indexOf("post+delete:actors") !== -1 ? (
                     <Button
                         color="primary"
-                        onClick={() => {
-                            setOpenModal(!openModal);
-                            setEditing(false);
+                        to={{
+                            pathname: "/actors/add-actor",
+                            state: { editing: false, actorData: null, token }
                         }}
+                        tag={RouterNavLink}
                     >
                         Add an actor
                     </Button>
@@ -67,10 +69,7 @@ export const Actors = () => {
                             actorData={actor}
                             exposedToken={decodedToken}
                             token={token}
-                            openModal={openModal}
-                            setOpenModal={setOpenModal}
                             editing={editing}
-                            setEditing={setEditing}
                         />
                     ))
                     ) : (
@@ -81,3 +80,10 @@ export const Actors = () => {
         </Container>
     );
 };
+
+export const RouteActors = () => (
+    <Switch>
+        <Route path="/actors/add-actor" component={AddActor} />
+        <Route path="/actors" component={Actors} />
+    </Switch>
+)

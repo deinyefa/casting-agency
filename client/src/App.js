@@ -6,8 +6,7 @@ import history from './utils/history';
 import { Home } from './components/Home';
 import { NavBar } from './components/NavBar';
 import { RouteMovies } from './components/Movies';
-import { Actors } from './components/Actors';
-import { AddActor } from './components/Forms/AddActor';
+import { RouteActors } from './components/Actors';
 import './App.css';
 
 function App() {
@@ -24,8 +23,7 @@ function App() {
           <Switch>
             <Route path='/' exact component={Home} />
             <Route path='/movies' component={RouteMovies} />
-            <Route path='/actors' component={Actors} />
-            <Route path='/actors/add-actor' component={AddActor} />
+            <Route path='/actors' component={RouteActors} />
           </Switch>
         </Container>
       </div>

@@ -1,23 +1,21 @@
 import React, { useState } from "react";
 import {
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
+    Card,
+    CardHeader,
+    CardBody,
+    CardFooter,
     Button,
     Form,
     FormGroup,
     Label,
     Input
 } from "reactstrap";
+import { REACT_APP_SERVER_URL } from "../../utils/auth_config";
+import { NavLink as RouterNavLink } from "react-router-dom";
 
-export const AddActor = ({
-    isOpen,
-    toggleModal,
-    actorData,
-    handleFormSubmit,
-    editing
-}) => {
+export const AddActor = props => {
+    const url = `${REACT_APP_SERVER_URL}/actors`;
+    const { editing, actorData, token } = props.location.state;
     const [formValues, setFormValues] = useState({
         name: (editing && actorData && actorData.name) || "",
         age: (editing && actorData && actorData.age) || "",
@@ -31,11 +29,30 @@ export const AddActor = ({
         });
     };
 
+    const handleFormSubmit = async (id, data) => {
+        const result = await fetch(editing ? `${url}/${id}` : url, {
+            method: editing ? "PATCH" : "POST",
+            headers: {
+                Authorization: "Bearer " + token,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+        const response = await result.json();
+
+        setFormValues({
+            name: response.actor.name,
+            age: response.actor.age,
+            gender: response.actor.gender
+        });
+        props.history.push('/actors')
+    };
+
     return (
         <>
-            <Modal isOpen={isOpen} toggle={toggleModal}>
-                <ModalHeader toggle={toggleModal}>Add an actor</ModalHeader>
-                <ModalBody>
+            <Card>
+                <CardHeader>Add an actor</CardHeader>
+                <CardBody>
                     <Form
                         onSubmit={e => {
                             e.preventDefault();
@@ -77,17 +94,17 @@ export const AddActor = ({
                             />
                         </FormGroup>
                     </Form>
-                </ModalBody>
-                <ModalFooter>
-                    <Button color="warning" onClick={toggleModal}>
+                </CardBody>
+                <CardFooter className="d-flex justify-content-between">
+                    <Button color="warning" tag={RouterNavLink} to="/actors">
                         Cancel
-          </Button>
+                    </Button>
                     <Button
                         color="primary"
                         type="submit"
                         onClick={e => {
                             e.preventDefault();
-                            handleFormSubmit({
+                            handleFormSubmit((actorData && actorData.id) || null ,{
                                 name: formValues.name,
                                 age: formValues.age,
                                 gender: formValues.gender
@@ -95,9 +112,9 @@ export const AddActor = ({
                         }}
                     >
                         Add
-          </Button>
-                </ModalFooter>
-            </Modal>
+                    </Button>
+                </CardFooter>
+            </Card>
         </>
     );
 };

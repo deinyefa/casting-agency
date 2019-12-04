@@ -6,8 +6,7 @@ import { NavLink as RouterNavLink, withRouter } from "react-router-dom";
 const MovieItem = ({
     movieData,
     exposedToken,
-    token,
-    ...props
+    token
 }) => {
     const [movie, setMovie] = useState({
         title: (movieData && movieData.title) || "",
