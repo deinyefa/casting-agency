@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import { Container, Row, Button } from "reactstrap";
+import { NavLink as RouterNavLink, Route, Switch } from "react-router-dom";
 import jwt from "jwt-decode";
 import { useFetch } from "../hooks/useFetch";
 import { useAuth0 } from "../react-auth0-spa";
 import { Movie } from "./Movie";
 import { REACT_APP_SERVER_URL } from "../utils/auth_config";
 import { Loader } from "./UI/Loader";
+import { AddMovie } from './Forms/AddMovie';
 
-export const Movies = () => {
-    const [openModal, setOpenModal] = useState(false);
+const Movies = () => {
     const [editing, setEditing] = useState(false);
     const [pageNum, setPageNum] = useState(1);
     const [token, setToken] = useState();
@@ -45,39 +46,45 @@ export const Movies = () => {
     };
 
     return (
-        <Container>
-            <h1>Movies!</h1>
-            {decodedToken &&
-                decodedToken.permissions.indexOf("post+delete:movies") !== -1 ? (
-                    <Button
-                        color="primary"
-                        onClick={() => {
-                            setOpenModal(!openModal);
-                            setEditing(false);
-                        }}
-                    >
-                        Add a movie
-                    </Button>
-                ) : null}
-            <Row>
-                {result.movies ? (
-                    result.movies.map(movie => (
-                        <Movie
-                            key={movie.id}
-                            movieData={movie}
-                            exposedToken={decodedToken}
-                            token={token}
-                            openModal={openModal}
-                            setOpenModal={setOpenModal}
-                            editing={editing}
-                            setEditing={setEditing}
-                        />
-                    ))
+        <>
+            <Container>
+                <h1>Movies!</h1>
+                {decodedToken &&
+                    decodedToken.permissions.indexOf("post+delete:movies") !== -1 ? (
+                        <Button color="primary" to={{
+                            pathname: "/movies/add-movie",
+                            state: { editing: false, movieData: null, token: token }
+                        }} tag={RouterNavLink}>
+                            Add a movie
+                        </Button>
+                    ) : null}
+                <Row>
+                    {result.movies ? (
+                        result.movies.map(movie => (
+                            <Movie
+                                key={movie.id}
+                                movieData={movie}
+                                exposedToken={decodedToken}
+                                token={token}
+                                editing={editing}
+                                setEditing={setEditing}
+                            />
+                        ))
                     ) : (
-                        <Loader />
-                )}
-            </Row>
-            <Row className="justify-content-center">{create_pagination()}</Row>
-        </Container>
+                            <Loader />
+                        )}
+                </Row>
+                <Row className="justify-content-center">{create_pagination()}</Row>
+            </Container>
+        </>
     );
 };
+
+export const RouteMovies = () => {
+    return (
+        <Switch>
+            <Route path="/movies/add-movie" component={AddMovie} />
+            <Route path="/movies" component={Movies} />
+        </Switch>
+    )
+}

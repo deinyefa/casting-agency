@@ -5,8 +5,9 @@ import { useAuth0 } from './react-auth0-spa';
 import history from './utils/history';
 import { Home } from './components/Home';
 import { NavBar } from './components/NavBar';
-import { Movies } from './components/Movies';
+import { RouteMovies } from './components/Movies';
 import { Actors } from './components/Actors';
+import { AddActor } from './components/Forms/AddActor';
 import './App.css';
 
 function App() {
@@ -22,8 +23,9 @@ function App() {
         <Container className="flex-grow-1 mt-5">
           <Switch>
             <Route path='/' exact component={Home} />
-            <Route path='/movies' component={Movies} />
+            <Route path='/movies' component={RouteMovies} />
             <Route path='/actors' component={Actors} />
+            <Route path='/actors/add-actor' component={AddActor} />
           </Switch>
         </Container>
       </div>

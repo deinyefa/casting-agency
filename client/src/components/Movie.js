@@ -1,22 +1,18 @@
 import React, { useState } from "react";
 import { Col, Card, CardBody, CardTitle, CardText, Button } from "reactstrap";
-import { AddMovie } from "./Forms/AddMovie";
 import { REACT_APP_SERVER_URL } from "../utils/auth_config";
+import { NavLink as RouterNavLink, withRouter } from "react-router-dom";
 
-export const Movie = ({
+const MovieItem = ({
     movieData,
     exposedToken,
     token,
-    editing,
-    setEditing,
-    openModal,
-    setOpenModal
+    ...props
 }) => {
     const [movie, setMovie] = useState({
         title: (movieData && movieData.title) || "",
         release_date: (movieData && movieData.release_date) || ""
     });
-    const url = `${REACT_APP_SERVER_URL}/movies`;
 
     const removeItem = async id => {
         await fetch(`${REACT_APP_SERVER_URL}/movies/${id}`, {
@@ -26,24 +22,6 @@ export const Movie = ({
                 "Content-Type": "application/json"
             }
         });
-    };
-
-    const handleFormSubmit = async data => {
-        const result = await fetch(editing ? `${url}/${movieData.id}` : url, {
-            method: editing ? "PATCH" : "POST",
-            headers: {
-                Authorization: "Bearer " + token,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        });
-        const response = await result.json();
-
-        setMovie({
-            title: response.movie.title,
-            release_date: response.movie.release_date
-        });
-        setOpenModal();
     };
 
     return (
@@ -59,19 +37,22 @@ export const Movie = ({
                                     <Button
                                         color="primary"
                                         className="float-left"
-                                        onClick={() => {
-                                            setEditing(true);
-                                            setOpenModal(!openModal);
+                                        tag={RouterNavLink}
+                                        to={{
+                                            pathname: '/movies/add-movie',
+                                            state: { movieData, editing: true, token }
                                         }}
                                     >
                                         Edit
                                     </Button>
-                            ) : null}
+                                ) : null}
                             {exposedToken.permissions.indexOf("post+delete:movies") !== -1 ? (
                                 <Button
+                                    tag={RouterNavLink}
+                                    to="/movies"
                                     color="danger"
                                     className="float-right"
-                                    onClick={() => removeItem(movie.id)}
+                                    onClick={() => removeItem(movieData.id)}
                                 >
                                     Delete
                                 </Button>
@@ -80,14 +61,8 @@ export const Movie = ({
                     </CardBody>
                 </Card>
             </Col>
-            {openModal ? (
-                <AddMovie
-                    isOpen={openModal}
-                    toggleModal={() => setOpenModal(!openModal)}
-                    movieData={movie}
-                    handleFormSubmit={handleFormSubmit}
-                />
-            ) : null}
         </>
     );
 };
+
+export const Movie = withRouter(MovieItem)

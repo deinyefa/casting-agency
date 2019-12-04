@@ -1,23 +1,21 @@
 import React, { useState } from "react";
 import {
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
+    Card,
+    CardHeader,
+    CardBody,
+    CardFooter,
     Button,
     Form,
     FormGroup,
     Label,
     Input
 } from "reactstrap";
+import { REACT_APP_SERVER_URL } from "../../utils/auth_config";
+import { NavLink as RouterNavLink } from "react-router-dom";
 
-export const AddMovie = ({
-    isOpen,
-    toggleModal,
-    movieData,
-    handleFormSubmit,
-    editing
-}) => {
+export const AddMovie = props => {
+    const url = `${REACT_APP_SERVER_URL}/movies`;
+    const { editing, movieData, token } = props.location.state
     const [formValues, setFormValues] = useState({
         title: (editing && movieData && movieData.title) || "",
         release_date: (editing && movieData && movieData.release_date) || ""
@@ -30,10 +28,28 @@ export const AddMovie = ({
         });
     };
 
+    const handleFormSubmit = async (id, data) => {
+        const result = await fetch(editing ? `${url}/${id}` : url, {
+            method: editing ? "PATCH" : "POST",
+            headers: {
+                Authorization: "Bearer " + token,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+        const response = await result.json();
+
+        setFormValues({
+            title: response.movie.title,
+            release_date: response.movie.release_date
+        });
+        props.history.push('/movies')
+    };
+
     return (
-        <Modal isOpen={isOpen} toggle={toggleModal}>
-            <ModalHeader toggle={toggleModal}>Add a movie</ModalHeader>
-            <ModalBody>
+        <Card>
+            <CardHeader>Add a movie</CardHeader>
+            <CardBody>
                 <Form
                     onSubmit={e =>{
                         e.preventDefault()
@@ -64,9 +80,9 @@ export const AddMovie = ({
                         />
                     </FormGroup>
                 </Form>
-            </ModalBody>
-            <ModalFooter>
-                <Button color="warning" onClick={toggleModal}>
+            </CardBody>
+            <CardFooter className="d-flex justify-content-between">
+                <Button tag={RouterNavLink} to="/movies" color="warning">
                     Cancel
                 </Button>
                 <Button
@@ -74,7 +90,7 @@ export const AddMovie = ({
                     type="submit"
                     onClick={e => {
                         e.preventDefault();
-                        handleFormSubmit({
+                        handleFormSubmit((movieData && movieData.id )|| null, {
                             title: formValues.title,
                             release_date: formValues.release_date
                         });
@@ -82,7 +98,7 @@ export const AddMovie = ({
                 >
                     Add
                 </Button>
-            </ModalFooter>
-        </Modal>
+            </CardFooter>
+        </Card>
     );
 };

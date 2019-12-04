@@ -1,35 +1,51 @@
-import React, { useState } from 'react'
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, Label, Input } from 'reactstrap'
-import { REACT_APP_SERVER_URL } from '../../utils/auth_config'
+import React, { useState } from "react";
+import {
+    Modal,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    Button,
+    Form,
+    FormGroup,
+    Label,
+    Input
+} from "reactstrap";
 
-export const AddActor = ({ isOpen, toggleModal, actorData, handleFormSubmit }) => {
+export const AddActor = ({
+    isOpen,
+    toggleModal,
+    actorData,
+    handleFormSubmit,
+    editing
+}) => {
     const [formValues, setFormValues] = useState({
-        name: (actorData && actorData.name) || '',
-        age: (actorData && actorData.age) || '',
-        gender: (actorData && actorData.gender) || ''
-    })
-    const url = `${REACT_APP_SERVER_URL}/actors`;
+        name: (editing && actorData && actorData.name) || "",
+        age: (editing && actorData && actorData.age) || "",
+        gender: (editing && actorData && actorData.gender) || ""
+    });
 
     const updateFormFields = (field, value) => {
         setFormValues({
             ...formValues,
             [field]: value
-        })
-    }
+        });
+    };
 
     return (
         <>
             <Modal isOpen={isOpen} toggle={toggleModal}>
                 <ModalHeader toggle={toggleModal}>Add an actor</ModalHeader>
                 <ModalBody>
-                    <Form onSubmit={e => {
-                        e.preventDefault()
-                        handleFormSubmit({
-                            name: formValues.name,
-                            age: formValues.age,
-                            gender: formValues.gender
-                        })
-                    }}>
+                    <Form
+                        onSubmit={e => {
+                            e.preventDefault();
+                            handleFormSubmit({
+                                name: formValues.name,
+                                age: formValues.age,
+                                gender: formValues.gender
+                            });
+                        }}
+                    >
                         <FormGroup>
                             <Label>Actor name</Label>
                             <Input
@@ -37,7 +53,8 @@ export const AddActor = ({ isOpen, toggleModal, actorData, handleFormSubmit }) =
                                 name="name"
                                 id="name"
                                 value={formValues.name}
-                                onChange={e => updateFormFields('name', e.target.value)} />
+                                onChange={e => updateFormFields("name", e.target.value)}
+                            />
                         </FormGroup>
                         <FormGroup>
                             <Label>Actor age</Label>
@@ -46,7 +63,8 @@ export const AddActor = ({ isOpen, toggleModal, actorData, handleFormSubmit }) =
                                 name="age"
                                 id="age"
                                 value={formValues.age}
-                                onChange={e => updateFormFields('age', e.target.value)} />
+                                onChange={e => updateFormFields("age", e.target.value)}
+                            />
                         </FormGroup>
                         <FormGroup>
                             <Label>Actor gender</Label>
@@ -55,22 +73,31 @@ export const AddActor = ({ isOpen, toggleModal, actorData, handleFormSubmit }) =
                                 name="gender"
                                 id="gender"
                                 value={formValues.gender}
-                                onChange={e => updateFormFields('gender', e.target.value)} />
+                                onChange={e => updateFormFields("gender", e.target.value)}
+                            />
                         </FormGroup>
                     </Form>
                 </ModalBody>
                 <ModalFooter>
-                    <Button color="warning" onClick={toggleModal}>Cancel</Button>
-                    <Button color="primary" type='submit' onClick={e => {
-                        e.preventDefault()
-                        handleFormSubmit({
-                            name: formValues.name,
-                            age: formValues.age,
-                            gender: formValues.gender
-                        })
-                    }}>Add</Button>
+                    <Button color="warning" onClick={toggleModal}>
+                        Cancel
+          </Button>
+                    <Button
+                        color="primary"
+                        type="submit"
+                        onClick={e => {
+                            e.preventDefault();
+                            handleFormSubmit({
+                                name: formValues.name,
+                                age: formValues.age,
+                                gender: formValues.gender
+                            });
+                        }}
+                    >
+                        Add
+          </Button>
                 </ModalFooter>
             </Modal>
         </>
-    )
-}
+    );
+};
